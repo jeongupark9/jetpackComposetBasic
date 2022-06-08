@@ -5,10 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,7 +29,18 @@ class MainActivity : ComponentActivity() {
     }
 }
 @Composable
-fun MyApp(names: List<String> = listOf("World", "Compose")) {
+fun MyApp() {
+
+    var shouldShowOnboarding by remember { mutableStateOf(true) }
+
+    if (shouldShowOnboarding) {
+        OnboardingScreen(onContinueClicked = { shouldShowOnboarding = false })
+    } else {
+        Greetings()
+    }
+}
+@Composable
+private fun Greetings(names: List<String> = listOf("World", "Compose")){
     Column(modifier = Modifier.padding(vertical = 4.dp)) {
         for (name in names) {
             Greeting(name = name)
@@ -62,8 +70,7 @@ private fun Greeting(name: String) {
     }
 }
 @Composable
-fun OnboardingScreen() {
-    var shouldShowOnboarding = remember { mutableStateOf(true) }
+fun OnboardingScreen(onContinueClicked: () -> Unit){
 
     Surface {
         Column(
@@ -74,7 +81,7 @@ fun OnboardingScreen() {
             Text("Welcome to the Basics Codelab!")
             Button(
                 modifier = Modifier.padding(vertical = 24.dp),
-                onClick = { shouldShowOnboarding.value = false }
+                onClick = onContinueClicked
             ) {
                 Text("Continue")
             }
@@ -92,6 +99,6 @@ fun DefaultPreview() {
 @Composable
 fun OnboardingPreview() {
     JetpackComposetBasicTheme {
-        OnboardingScreen()
+        OnboardingScreen(onContinueClicked = {  })
     }
 }
